@@ -1,6 +1,6 @@
 # Just Did It
 
-> Consistency is showing up — not keeping a streak alive.
+> Consistency is coming back — not never missing.
 
 A small iOS habit app I built for myself. Local-only, no accounts, no cloud, no dependencies. SwiftUI + SwiftData.
 
