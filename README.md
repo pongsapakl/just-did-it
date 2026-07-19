@@ -1,51 +1,47 @@
 # Just Did It
 
-A tiny, local-only iOS habit app with one job: let you press a satisfying button when you did the thing.
+> Consistency is showing up — not keeping a streak alive.
 
-No streaks to lose. No accounts. No cloud. No guilt mechanics. Opening the app counts as showing up — the whole design is built around being non-punishing.
+A small iOS habit app I built for myself. Local-only, no accounts, no cloud, no dependencies. SwiftUI + SwiftData.
 
-## Why
+## Why I built it
 
-Most habit trackers punish you: break a streak and the app makes you feel like you failed. This one flips it. Every action is a chunky physical push-key that toggles in with a click. History is a quiet dot grid, not a scoreboard. If all you did today was open the app, that counts as showing up — and the app tells you how many days you've shown up, not how many you've missed.
+Every habit tracker I tried punished me. Miss a day, the streak resets to zero, and the app makes sure I feel it. That guilt loop made me quit the tracker, not the habit.
 
-I built it for myself. It's shared here in case the idea is useful to you.
+So I flipped the rule: **reward showing up, never punish variance.** Some days I open the app and genuinely have nothing to log — a rest day. That still counts. In this app, opening it *is* showing up, and misses are just blank cells in a grid, not a zeroed counter.
 
-## Features
+The other itch was tactility. Tapping a checkbox feels like filing paperwork. I wanted checking off a habit to feel like pressing a real key — so the buttons are drawn as physical push-keys with actual pressed depth and a haptic click.
 
-- **Push-key checkoffs** — monochrome, tactile buttons with real pressed depth; black/white parity in dark mode
-- **Groups as inline dropdowns** — related actions fold into a row, no sub-page navigation
-- **GitHub-style history grid** — a 3-level intensity grid of your activity, plus "shown up N days"
-- **A reminder that learns you** — one daily notification, timed from when you usually open the app (median of your recent opens, minus 15 minutes); it skips days you've already shown up, and you can turn it off
-- **Date rollover** — today's list resets at midnight or when the app returns to foreground, no stale checkmarks
-- **Local-only data** — SwiftData/SQLite in the app sandbox; it rides along in your normal iPhone backup; nothing ever leaves the device
-- **Light & dark app icons**
+## How it works
+
+- **Push-key checkoffs** — monochrome hardware-style keys; pressed state inverts with real depth. Black/white parity in dark mode.
+- **"Shown up N days" instead of a streak** — opening the app records a `Visit`. History leads with a cumulative count that never resets, plus "M of the last 30".
+- **Three-level history grid** — blank (didn't open), faint (opened, logged nothing), solid (opened + logged). Gaps are visible without being shamed.
+- **A reminder that learns my schedule** — I didn't want to pick a notification time, so it computes the median of my last 21 app opens, minus 15 minutes (defaults to 20:00 until it has 3 samples). Fully local `UNUserNotificationCenter`, schedules 7 days ahead, skips days I've already shown up. Toggle in the Edit list.
+- **Groups as inline dropdowns** — related actions fold into one row. I tried sub-pages first; the extra navigation was enough friction to stop me logging.
+- **Date rollover** — the list kept hanging on yesterday when the app stayed open overnight, so today recomputes at midnight and on every foreground.
+- **Data stays on the phone** — SwiftData/SQLite in the app sandbox. It rides along in the normal iPhone backup. Nothing leaves the device.
 
 ## Stack
 
-SwiftUI + SwiftData. No dependencies. iOS 18+, Xcode 16.
+SwiftUI + SwiftData, zero dependencies. iOS 18+, Xcode 16.
 
-## Install
+## Building it onto your phone
 
-This isn't on the App Store — you build it onto your own phone.
+Not on the App Store — I sideload it onto my own phone, and you'd do the same.
 
-### With Xcode
+**Xcode:** open `JustDidIt.xcodeproj`, set your own team + bundle identifier under *Signing & Capabilities*, build to your device. A free Apple ID works.
 
-1. Clone, open `JustDidIt.xcodeproj`
-2. In *Signing & Capabilities*, select your own team (a free Apple ID works) and change the bundle identifier to something of yours
-3. Plug in your iPhone, build & run
-
-### Headless (no Xcode UI)
-
-After signing is configured once, plug in your unlocked iPhone and:
+**Headless** (what I actually use): once signing is configured, plug in the unlocked phone and
 
 ```sh
 ./deploy.sh
 ```
 
-It builds, installs, and launches the app on the connected device.
+builds, installs, and launches without opening Xcode.
 
-> **Free Apple ID note:** apps signed with a free (non-paid) developer account expire after 7 days. Just re-run `./deploy.sh` — your data persists.
+With a free (non-paid) Apple ID the signature expires after 7 days — re-running `./deploy.sh` renews it, data persists.
 
 ## License
 
-[GPL-3.0](LICENSE). Use it, change it, share it — if you distribute a modified version, it has to stay open source.
+[GPL-3.0](LICENSE).
