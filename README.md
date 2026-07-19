@@ -1,26 +1,33 @@
 # Just Did It
 
-> Consistency is coming back — not never missing.
+> Consistency is the consistency of showing up — not the consistency of doing it perfectly.
+> We don't need a perfect day. But we need to do it every day.
 
-A small iOS habit app I built for myself. Local-only, no accounts, no cloud, no dependencies. SwiftUI + SwiftData.
+A yes/no daily habit checkoff app I built for myself. Tap a key when you did the thing; see your consistency as a GitHub-style grid. iOS, local-only, no accounts, no dependencies. The name is a joke on Nike's.
 
-## Why I built it
+<p align="center">
+  <img src="docs/screenshots/today-light.png" width="320" alt="Today — push-key checkoffs" />
+  &nbsp;&nbsp;
+  <img src="docs/screenshots/history-light.png" width="320" alt="History — consistency grids" />
+</p>
 
-Every habit tracker I tried punished me. Miss a day, the streak resets to zero, and the app makes sure I feel it. That guilt loop made me quit the tracker, not the habit.
+## What it does
 
-So I flipped the rule: **reward showing up, never punish variance.** Some days I open the app and genuinely have nothing to log — a rest day. That still counts. In this app, opening it *is* showing up, and misses are just blank cells in a grid, not a zeroed counter.
+- **Yes/no checkoffs, nothing else** — an action is either done today or it isn't. No counts, no durations, no notes. Tap to check, tap to uncheck.
+- **Keys, not checkboxes** — each action is a raised graphite key with a real 3D bottom lip that presses flush, with a haptic click. I wanted checking off to feel like a hardware button / fidget switch. Black/white parity in dark mode.
+- **GitHub-style consistency grids** — History shows a contribution grid per action, plus an overall one at the top with a headline count of days.
+- **Groups** — related actions fold into one key ("Drink" expands in place to Coffee / Tea / Alcohol).
+- **A reminder that learns your open time** — one local notification a day, scheduled from the median of your recent opens minus 15 minutes. No server. Toggle in the Edit list.
+- **Local data only** — SwiftData/SQLite in the app sandbox; rides along in the normal iPhone backup. Nothing leaves the device.
 
-The other itch was tactility. Tapping a checkbox feels like filing paperwork. I wanted checking off a habit to feel like pressing a real key — so the buttons are drawn as physical push-keys with actual pressed depth and a haptic click.
+## Design choices
 
-## How it works
+A few deliberate ones, downstream of the quote at the top:
 
-- **Push-key checkoffs** — monochrome hardware-style keys; pressed state inverts with real depth. Black/white parity in dark mode.
-- **"Shown up N days" instead of a streak** — opening the app records a `Visit`. History leads with a cumulative count that never resets, plus "M of the last 30".
-- **Three-level history grid** — blank (didn't open), faint (opened, logged nothing), solid (opened + logged). Gaps are visible without being shamed.
-- **A reminder that learns my schedule** — I didn't want to pick a notification time, so it computes the median of my last 21 app opens, minus 15 minutes (defaults to 20:00 until it has 3 samples). Fully local `UNUserNotificationCenter`, schedules 7 days ahead, skips days I've already shown up. Toggle in the Edit list.
-- **Groups as inline dropdowns** — related actions fold into one row. I tried sub-pages first; the extra navigation was enough friction to stop me logging.
-- **Date rollover** — the list kept hanging on yesterday when the app stayed open overnight, so today recomputes at midnight and on every foreground.
-- **Data stays on the phone** — SwiftData/SQLite in the app sandbox. It rides along in the normal iPhone backup. Nothing leaves the device.
+- There's no streak counter that resets to zero. The headline is "Shown up N days" — cumulative. A missed day is a blank cell in the grid, and that's the whole consequence.
+- Opening the app counts as showing up (the overall grid's faint level), so a rest day where there's nothing to log still registers. Done actions render solid.
+- The reminder skips days you've already opened the app, and today recomputes at midnight and on foreground so the list never hangs on yesterday.
+- Everything is monochrome. Done keys recede to flat and light; not-done keys sit raised and dark. The contrast is the UI.
 
 ## Stack
 
@@ -28,9 +35,9 @@ SwiftUI + SwiftData, zero dependencies. iOS 18+, Xcode 16.
 
 ## Building it onto your phone
 
-Not on the App Store — I sideload it onto my own phone, and you'd do the same.
+Not on the App Store — I sideload it, and you'd do the same.
 
-**Xcode:** open `JustDidIt.xcodeproj`, set your own team + bundle identifier under *Signing & Capabilities*, build to your device. A free Apple ID works.
+**Xcode:** open `JustDidIt.xcodeproj`, set your own team and bundle identifier under *Signing & Capabilities*, build to your device. A free Apple ID works.
 
 **Headless** (what I actually use): once signing is configured, plug in the unlocked phone and
 
@@ -40,7 +47,7 @@ Not on the App Store — I sideload it onto my own phone, and you'd do the same.
 
 builds, installs, and launches without opening Xcode.
 
-With a free (non-paid) Apple ID the signature expires after 7 days — re-running `./deploy.sh` renews it, data persists.
+With a free Apple ID the signature expires after 7 days — re-run `./deploy.sh` to renew; data persists.
 
 ## License
 
