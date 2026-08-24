@@ -11,3 +11,7 @@ xcuserdata/
 WORK.md
 docs/sessions/
 CLAUDE.md
+
+# Signing / App Store Connect credentials (never commit)
+*.p8
+ExportOptions.plist
