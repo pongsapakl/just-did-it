@@ -6,19 +6,22 @@
 # Relies on the signing already configured in the project (Automatic signing,
 # DEVELOPMENT_TEAM set). Re-run any time — this is also how you renew the app
 # before the free-signing 7-day expiry.
+#
+# This is the fast loop: a code change is on the phone in about a minute. To cut
+# a build for TestFlight instead, use ./release.sh (see docs/RELEASING.md).
 
 set -euo pipefail
 cd "$(dirname "$0")"
 
 PROJECT="JustDidIt.xcodeproj"
 SCHEME="JustDidIt"
-BUNDLE_ID="com.justdidit.JustDidIt"
+BUNDLE_ID="com.pongsapakl.justdidit"
 DERIVED="build"
 APP="$DERIVED/Build/Products/Debug-iphoneos/$SCHEME.app"
 
 echo "▶ Finding connected iPhone…"
 DEVICE_ID=$(xcrun devicectl list devices 2>/dev/null \
-  | grep -i connected \
+  | grep -iE 'connected|available' \
   | grep -oE '[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}' \
   | head -1 || true)
 if [ -z "${DEVICE_ID:-}" ]; then
@@ -47,6 +50,12 @@ echo "▶ Installing…"
 xcrun devicectl device install app --device "$DEVICE_ID" "$APP" >/dev/null
 
 echo "▶ Launching…"
-xcrun devicectl device process launch --device "$DEVICE_ID" "$BUNDLE_ID" >/dev/null || true
-
-echo "✓ Installed & launched on your iPhone."
+if xcrun devicectl device process launch --device "$DEVICE_ID" "$BUNDLE_ID" >/dev/null 2>&1; then
+  echo "✓ Installed & launched on your iPhone."
+else
+  echo "✓ Installed — but it wouldn't launch."
+  echo "  Usually the profile just isn't trusted yet: on the iPhone, open"
+  echo "  Settings → General → VPN & Device Management → tap the developer"
+  echo "  certificate → Trust. Then launch the app from the home screen."
+  exit 1
+fi
