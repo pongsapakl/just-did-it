@@ -54,6 +54,6 @@ struct RootView: View {
 
         context.insert(Item(name: "Coffee", sortOrder: 0, parent: drink))
         context.insert(Item(name: "Tea", sortOrder: 1, parent: drink))
-        context.insert(Item(name: "Alcohol", sortOrder: 2, parent: drink))
+        context.insert(Item(name: "Water", sortOrder: 2, parent: drink))
     }
 }

@@ -9,6 +9,12 @@ struct ManageView: View {
     @Query(sort: \Item.sortOrder) private var items: [Item]
     @AppStorage("remindersEnabled") private var remindersEnabled = true
 
+    /// App Review requires the privacy policy to be reachable from inside the app,
+    /// not just from the store listing.
+    private static let privacyPolicy = URL(
+        string: "https://github.com/pongsapakl/just-did-it/blob/main/PRIVACY.md"
+    )!
+
     private var topLevel: [Item] {
         items
             .filter { $0.parent == nil && !$0.isArchived }
@@ -41,6 +47,21 @@ struct ManageView: View {
                     Toggle("Daily reminder", isOn: $remindersEnabled)
                 } footer: {
                     Text("A nudge around the time you usually check in. Skipped on days you've already shown up.")
+                }
+
+                Section {
+                    Link(destination: Self.privacyPolicy) {
+                        HStack {
+                            Text("Privacy")
+                            Spacer()
+                            Image(systemName: "arrow.up.right")
+                                .font(.footnote)
+                                .foregroundStyle(.tertiary)
+                        }
+                    }
+                    .tint(.primary)
+                } footer: {
+                    Text("Everything you log stays on this iPhone.")
                 }
             }
             .onChange(of: remindersEnabled) { _, enabled in
